@@ -43,6 +43,7 @@
 //! - [`domain`]: Core domain types and traits
 //! - [`error`]: Error types and handling
 
+pub mod cache;
 pub mod controlplane;
 pub mod crd;
 pub mod domain;
@@ -78,6 +79,12 @@ pub use hardware::{
     HardwareScanner, ScannerConfig,
     DeviceClassifier, DeviceClassification,
     DriveAllocator, AllocationPolicy, PlacementPolicy,
+};
+
+pub use cache::{
+    StorageCache, MultiTierCache, MultiTierCacheConfig,
+    CacheKey, CacheEntry, CacheTier, CacheLookupResult,
+    CacheStatsSnapshot, CacheEvent,
 };
 
 /// Library version

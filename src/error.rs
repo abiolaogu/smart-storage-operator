@@ -162,6 +162,30 @@ pub enum Error {
     // =========================================================================
     #[error("IO error: {0}")]
     Io(#[from] std::io::Error),
+
+    // =========================================================================
+    // Cache Errors
+    // =========================================================================
+    #[error("Cache bypass: object {key} size {size_bytes} bytes exceeds maximum")]
+    CacheBypass { key: String, size_bytes: u64 },
+
+    #[error("Cache tier unavailable: {tier}")]
+    CacheTierUnavailable { tier: String },
+
+    #[error("Cache compression failed with {algorithm}: {reason}")]
+    CacheCompressionFailed { algorithm: String, reason: String },
+
+    #[error("Cache decompression failed with {algorithm}: {reason}")]
+    CacheDecompressionFailed { algorithm: String, reason: String },
+
+    #[error("Cache entry corrupted: {key}")]
+    CacheEntryCorrupted { key: String },
+
+    #[error("Cache eviction failed for tier {tier}: {reason}")]
+    CacheEvictionFailed { tier: String, reason: String },
+
+    #[error("Cache prefetch failed: {reason}")]
+    CachePrefetchFailed { reason: String },
 }
 
 /// Action to take on error during reconciliation
@@ -206,7 +230,12 @@ impl Error {
             Error::Configuration(_)
             | Error::ApiValidation(_)
             | Error::DurationParse(_)
-            | Error::CapacityParse(_) => ErrorAction::NoRequeue,
+            | Error::CapacityParse(_)
+            | Error::CacheBypass { .. }
+            | Error::CacheEntryCorrupted { .. } => ErrorAction::NoRequeue,
+
+            // Cache tier unavailable - retry with backoff
+            Error::CacheTierUnavailable { .. } => ErrorAction::RequeueWithBackoff,
 
             // All other errors - retry with backoff
             _ => ErrorAction::RequeueWithBackoff,
