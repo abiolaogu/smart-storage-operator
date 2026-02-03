@@ -5,7 +5,7 @@ edition = "2021"
 authors = ["BillyRonks Global Limited <engineering@billyronks.io>"]
 description = "Unified Control Plane Orchestrator for Block/File/Object storage"
 license = "Apache-2.0"
-repository = "https://github.com/billyronks/smart-storage-operator"
+repository = "https://github.com/abiolaogu/smart-storage-operator"
 keywords = ["kubernetes", "operator", "storage", "mayastor", "tiering", "ceph-killer"]
 categories = ["development-tools", "command-line-utilities"]
 
